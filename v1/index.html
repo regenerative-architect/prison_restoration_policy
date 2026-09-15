@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071723">
+<title>prison restoration policy accelerator</title>
+<meta name="description" content="A standalone implementation cockpit for policymakers and institutional governance operators to convert correctional systems toward education, restoration, credentials, public value, reentry readiness, and measurable rehabilitation.">
+<style>
+:root{
+  --bg:#07121c;--panel:#0e1c29;--panel2:#132535;--panel3:#172c3e;
+  --text:#eef7ff;--muted:#aabaca;--line:#284357;--accent:#78c8a3;
+  --accent2:#83b7ff;--warn:#ffd166;--danger:#ff8585;--ok:#6fdd9b;
+  --shadow:0 12px 32px rgba(0,0,0,.26);--r:16px;--nav:292px;
+}
+@media(prefers-color-scheme:light){
+ :root{--bg:#edf4f7;--panel:#fff;--panel2:#f5f8fa;--panel3:#edf4f8;--text:#14222e;--muted:#607181;--line:#d6e0e6;--shadow:0 8px 25px rgba(10,35,55,.08)}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15.8px/1.56 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:var(--accent2)}
+.app{display:grid;grid-template-columns:var(--nav) 1fr;min-height:100vh}
+aside{position:sticky;top:0;height:100vh;overflow:auto;padding:18px;border-right:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--bg))}
+.brand{font-weight:900;letter-spacing:.02em;font-size:1.05rem}
+.tag{display:inline-block;margin:8px 0 14px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.79rem}
+.search{width:100%;padding:10px 11px;border-radius:11px;border:1px solid var(--line);background:var(--panel2);color:var(--text);margin-bottom:10px}
+nav a{display:block;padding:7px 9px;margin:2px 0;border-radius:9px;text-decoration:none;color:var(--muted)}
+nav a:hover,nav a:focus{background:var(--panel2);color:var(--text)}
+main{min-width:0}
+.hero{padding:48px clamp(20px,5vw,70px) 32px;border-bottom:1px solid var(--line);background:
+ radial-gradient(circle at 80% 20%,rgba(120,200,163,.13),transparent 30%),
+ radial-gradient(circle at 20% 10%,rgba(131,183,255,.10),transparent 32%)}
+.hero h1{margin:0 0 12px;max-width:1050px;font-size:clamp(2.2rem,5.4vw,5rem);line-height:.94;letter-spacing:-.04em}
+.hero p{max-width:920px;font-size:1.08rem;color:var(--muted)}
+.hud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:24px}
+.metric{padding:13px;border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:13px}
+.metric strong{display:block;font-size:1.3rem}
+.wrap{padding:24px clamp(16px,4vw,56px) 80px}
+section{margin-bottom:22px}
+.card,details{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card{padding:17px}
+details{overflow:hidden;margin:11px 0}
+summary{cursor:pointer;list-style:none;padding:15px 17px;font-weight:850;background:var(--panel2)}
+summary::-webkit-details-marker{display:none}
+.inside{padding:17px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+label{display:block;font-weight:760;margin:8px 0 5px}
+input[type=text],input[type=number],input[type=date],select,textarea{
+ width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text)
+}
+textarea{min-height:110px;resize:vertical}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+.btn.primary{background:var(--accent);border-color:transparent;color:#062016;font-weight:850}
+.btn.alt{background:var(--accent2);border-color:transparent;color:#061322;font-weight:850}
+.btn.warn{background:rgba(255,209,102,.12)}
+.notice{padding:12px 13px;border-radius:10px;border-left:4px solid var(--warn);background:rgba(255,209,102,.08)}
+.notice.ok{border-left-color:var(--ok);background:rgba(111,221,155,.08)}
+.notice.danger{border-left-color:var(--danger);background:rgba(255,133,133,.08)}
+.small{font-size:.86rem;color:var(--muted)}
+.pill{display:inline-block;padding:4px 8px;margin:3px;border:1px solid var(--line);border-radius:999px;font-size:.8rem}
+.badge{display:inline-block;padding:3px 7px;border:1px solid var(--line);border-radius:8px;background:rgba(120,200,163,.11);font-size:.8rem}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{text-transform:uppercase;letter-spacing:.045em;color:var(--muted);font-size:.8rem}
+.progress{height:11px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:var(--accent)}
+.module[data-hidden=true]{display:none}
+.stage{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:start;margin:10px 0}
+.stage .num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:var(--panel3);font-weight:900}
+.timeline{border-left:2px solid var(--line);margin-left:20px;padding-left:22px}
+.timeline .item{position:relative;margin:0 0 18px}
+.timeline .item:before{content:"";position:absolute;left:-29px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.kpi{font-variant-numeric:tabular-nums}
+.policybox{white-space:pre-wrap;background:var(--panel2);border:1px solid var(--line);padding:12px;border-radius:10px}
+pre{white-space:pre-wrap;word-break:break-word;background:var(--panel2);border:1px solid var(--line);padding:12px;border-radius:10px}
+details.nested{box-shadow:none;background:var(--panel2)}
+.reference{font-size:.9rem;padding:10px;border-bottom:1px solid var(--line)}
+footer{padding:26px clamp(16px,4vw,56px);border-top:1px solid var(--line);color:var(--muted)}
+@media(max-width:1000px){.hud,.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){
+ .app{grid-template-columns:1fr} aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+ .grid,.grid3,.grid4,.hud{grid-template-columns:1fr}
+}
+@media print{
+ aside,.no-print,.btnrow{display:none!important}.app{display:block}body{background:#fff;color:#000}
+ .card,details{box-shadow:none;border:1px solid #bbb;background:#fff} summary{background:#f2f2f2}
+ .hero{padding:20px;background:#fff}.wrap{padding:10px}a{color:#000}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+ <div class="brand">prison restoration policy accelerator</div>
+ <div class="tag">policy · governance · implementation</div>
+ <input id="search" class="search" type="search" placeholder="search implementation modules…" aria-label="Search implementation modules">
+ <nav>
+  <a href="#executive">executive case</a>
+  <a href="#launch">90-day launch</a>
+  <a href="#pilot">pilot builder</a>
+  <a href="#governance">governance architecture</a>
+  <a href="#tracks">restoration tracks</a>
+  <a href="#game">gamification rules</a>
+  <a href="#credentials">credentials & workforce</a>
+  <a href="#economics">economics & wages</a>
+  <a href="#rights">rights safeguards</a>
+  <a href="#reentry">reentry design</a>
+  <a href="#data">measurement</a>
+  <a href="#risk">risk register</a>
+  <a href="#procurement">procurement</a>
+  <a href="#coalition">coalition builder</a>
+  <a href="#policy">model policy language</a>
+  <a href="#exports">briefing exports</a>
+  <a href="#evidence">evidence base</a>
+ </nav>
+ <p class="small">Design premise: incarceration may lawfully restrict liberty, but programming should maximize education, accountability, restoration, employability, family stability, and public value—not coerced labor or ideological conformity.</p>
+</aside>
+
+<main>
+<header class="hero">
+ <h1>turn time served into capability built</h1>
+ <p>A rapid implementation cockpit for policymakers and correctional governance operators. Build a restoration-centered correctional pilot that converts idle time into education, accredited skills, ecological and edible infrastructure, fair work, reentry savings, mentorship, and independently evaluated public benefit.</p>
+ <div class="hud">
+  <div class="metric"><span class="small">readiness</span><strong id="readiness">0%</strong><span class="small">implementation inputs completed</span></div>
+  <div class="metric"><span class="small">pilot tracks</span><strong id="trackCount">0</strong><span class="small">selected program pathways</span></div>
+  <div class="metric"><span class="small">safeguards</span><strong id="safeguardScore">0/10</strong><span class="small">rights controls selected</span></div>
+  <div class="metric"><span class="small">target cohort</span><strong id="cohortHud">120</strong><span class="small">participants</span></div>
+  <div class="metric"><span class="small">launch horizon</span><strong>90 days</strong><span class="small">for initial pilot operations</span></div>
+ </div>
+</header>
+
+<div class="wrap">
+
+<section id="executive" class="module" data-search="executive case rationale policy prison reform education recidivism">
+<div class="card">
+ <h2>1. executive case for action</h2>
+ <div class="grid3">
+  <div class="card">
+   <h3>current failure mode</h3>
+   <p>Custody can become the organizing logic while education, treatment, workforce preparation, and restoration remain optional add-ons. Long waits for vocational programs can leave people incarcerated without access to the very interventions governments say reduce reoffending.</p>
+  </div>
+  <div class="card">
+   <h3>proposed inversion</h3>
+   <p>Keep lawful security constraints, but organize daily life around <strong>mastery, accountability, restoration, certification, paid contribution, and reentry readiness</strong>.</p>
+  </div>
+  <div class="card">
+   <h3>policy test</h3>
+   <p>At release, can the institution show more than elapsed time—such as credentials, verified work history, savings, references, treatment progress, family planning, and a credible employment pathway?</p>
+  </div>
+ </div>
+ <div class="notice ok" style="margin-top:12px"><strong>Evidence anchor:</strong> rigorous U.S. meta-analysis found correctional education participants were 28% less likely to recidivate in the highest-quality studies. A 2026 vocational-training study also found participation associated with lower recidivism and higher employment. These findings support education and training, not any specific gamification mechanic.</div>
+</div>
+</section>
+
+<section id="launch" class="module" data-search="90 day launch fast implementation timeline first 30 60 90 days">
+<details open>
+ <summary>2. 90-day launch sequence</summary>
+ <div class="inside">
+  <div class="timeline">
+   <div class="item"><h3>days 0–15 — authorize and bound the pilot</h3><p>Issue executive/departmental authority; select facility; appoint accountable program lead; establish legal, labor, safety, procurement, accessibility, and data review; define voluntary participation; prohibit retaliation for non-participation.</p></div>
+   <div class="item"><h3>days 15–30 — map demand and capacity</h3><p>Inventory waitlists, classrooms, instructors, land, greenhouses, shops, kitchens, tools, employers, community-college partners, conservation agencies, food banks, victim-service partners, and reentry providers.</p></div>
+   <div class="item"><h3>days 30–45 — choose 3–5 tracks</h3><p>Select pathways matched to labor demand and facility conditions. Pair every work track with formal learning, transferable credentials, safety standards, and a post-release employer or apprenticeship pathway.</p></div>
+   <div class="item"><h3>days 45–60 — establish governance and safeguards</h3><p>Create participant council, staff steering committee, external ethics/evaluation panel, wage/restitution policy, grievance route, data-minimization standard, credential agreements, and partner MOUs.</p></div>
+   <div class="item"><h3>days 60–75 — train staff and participants</h3><p>Train on program rules, trauma-aware practice, coaching, conflict de-escalation, workplace safety, measurement, anti-coercion requirements, and how gamification differs from discipline.</p></div>
+   <div class="item"><h3>days 75–90 — launch minimum viable cohort</h3><p>Begin with a manageable cohort; publish baseline metrics; start weekly learning reviews; fix workflow before scaling; do not expand merely because enrollment is high.</p></div>
+  </div>
+  <div class="notice"><strong>Fast does not mean reckless:</strong> if legal authority, occupational safety, voluntary consent, wage treatment, or evaluation design is unresolved, delay that component rather than improvise around rights.</div>
+ </div>
+</details>
+</section>
+
+<section id="pilot" class="module" data-search="pilot builder facility cohort budget jurisdiction security level">
+<details open>
+ <summary>3. pilot builder</summary>
+ <div class="inside">
+  <div class="grid">
+   <div>
+    <label>jurisdiction</label><input id="jurisdiction" type="text" placeholder="state / province / country / department">
+    <label>facility</label><input id="facility" type="text" placeholder="pilot institution name">
+    <label>facility type</label>
+    <select id="facilityType"><option>minimum security</option><option>medium security</option><option>women's institution</option><option>youth / young adult</option><option>jail / remand</option><option>mixed security</option></select>
+    <label>target cohort</label><input id="cohort" type="number" min="20" max="3000" value="120">
+   </div>
+   <div>
+    <label>primary bottleneck</label>
+    <select id="bottleneck"><option>education waitlist</option><option>vocational waitlist</option><option>idle time</option><option>weak reentry employment</option><option>food / ecological infrastructure opportunity</option><option>high disciplinary incidents</option><option>weak employer pipelines</option><option>low credential completion</option></select>
+    <label>pilot length</label>
+    <select id="pilotLength"><option>12 months</option><option selected>24 months</option><option>36 months</option></select>
+    <label>evaluation design ambition</label>
+    <select id="evalDesign"><option>descriptive dashboard</option><option>matched comparison</option><option>stepped-wedge / phased rollout</option><option>independent quasi-experimental evaluation</option></select>
+    <label>public-value target</label><input id="publicTarget" type="text" placeholder="e.g. 25,000 native/edible seedlings + 80 credentials">
+   </div>
+  </div>
+  <div class="btnrow"><button class="btn primary" id="savePilot">save pilot profile</button></div>
+  <div id="pilotSummary" class="notice ok" style="margin-top:12px"></div>
+ </div>
+</details>
+</section>
+
+<section id="governance" class="module" data-search="governance accountability board steering committee oversight participant council">
+<details open>
+ <summary>4. governance architecture</summary>
+ <div class="inside">
+  <div class="grid3">
+   <div class="card"><h3>executive sponsor</h3><p>Owns authority, funding, interagency barriers, and public accountability. Cannot unilaterally suppress unfavorable evaluation results.</p></div>
+   <div class="card"><h3>facility implementation team</h3><p>Operations, education, security, health, food service, industries/workforce, accessibility, data, and reentry personnel.</p></div>
+   <div class="card"><h3>participant council</h3><p>Structured participant feedback on safety, scheduling, teaching quality, coercion concerns, usability, and proposed improvements.</p></div>
+   <div class="card"><h3>external evaluation panel</h3><p>University/research and ethics partners with access to agreed metrics, methods, and publication protections.</p></div>
+   <div class="card"><h3>community partnership board</h3><p>Employers, unions, colleges, conservation groups, food systems, victim services, municipalities, and reentry providers.</p></div>
+   <div class="card"><h3>rights & labor reviewer</h3><p>Audits voluntariness, wages, safety, discrimination, grievance systems, accessibility, and the use of participant data.</p></div>
+  </div>
+  <h3>decision rule</h3>
+  <p class="notice">No program should scale because it photographs well. Scale only after it demonstrates acceptable safety, participant legitimacy, credential value, measurable outcomes, and sustainable partner capacity.</p>
+ </div>
+</details>
+</section>
+
+<section id="tracks" class="module" data-search="restoration tracks orchard food forest water construction repair trades horticulture ecology">
+<details open>
+ <summary>5. restoration and mastery tracks</summary>
+ <div class="inside">
+  <p>Select tracks that match facility conditions, local labor demand, participant interests, and real credential pathways.</p>
+  <div id="trackGrid" class="grid3"></div>
+  <div class="btnrow"><button class="btn primary" id="saveTracks">save selected tracks</button></div>
+  <div id="trackOutput"></div>
+ </div>
+</details>
+</section>
+
+<section id="game" class="module" data-search="gamification xp mastery guild quest badges privileges coercion">
+<details open>
+ <summary>6. gamification without coercion</summary>
+ <div class="inside">
+  <div class="grid">
+   <div>
+    <h3>reward these</h3>
+    <p><span class="pill">verified skill mastery</span><span class="pill">course completion</span><span class="pill">peer tutoring</span><span class="pill">safe teamwork</span><span class="pill">maintenance quality</span><span class="pill">restoration outcomes</span><span class="pill">credential milestones</span><span class="pill">mentoring</span></p>
+   </div>
+   <div>
+    <h3>do not reward these</h3>
+    <p><span class="pill">blind obedience</span><span class="pill">informing on peers</span><span class="pill">ideological conformity</span><span class="pill">public humiliation</span><span class="pill">race for release</span><span class="pill">unsafe productivity</span><span class="pill">unverified output counts</span></p>
+   </div>
+  </div>
+  <h3>recommended architecture</h3>
+  <table>
+   <thead><tr><th>mechanic</th><th>use</th><th>safeguard</th></tr></thead>
+   <tbody>
+    <tr><td>skill tree</td><td>visualize prerequisites and mastery</td><td>ties only to real learning outcomes</td></tr>
+    <tr><td>guild</td><td>team-based restoration missions</td><td>no coercive peer pressure; balanced teams</td></tr>
+    <tr><td>quest</td><td>bounded project with public-value objective</td><td>occupational safety + instructor oversight</td></tr>
+    <tr><td>badge</td><td>recognize platform milestones</td><td>clearly separate informal badges from accredited credentials</td></tr>
+    <tr><td>portfolio</td><td>show evidence of contribution and competence</td><td>participant owns portable copy</td></tr>
+   </tbody>
+  </table>
+  <div class="notice"><strong>Sentence length:</strong> do not casually convert XP into freedom. Legal release decisions require jurisdiction-specific due process, risk assessment, statutory authority, and safeguards against unequal access to programs.</div>
+ </div>
+</details>
+</section>
+
+<section id="credentials" class="module" data-search="credentials college credit certifications workforce apprenticeship employer">
+<details open>
+ <summary>7. credential and workforce engine</summary>
+ <div class="inside">
+  <div class="stage"><div class="num">1</div><div><h3>start from labor demand</h3><p>Use current regional vacancy, apprenticeship, licensing, and wage data. Do not train hundreds of people for a saturated occupation.</p></div></div>
+  <div class="stage"><div class="num">2</div><div><h3>map every track to a portable credential</h3><p>Industry certification, college credit, recognized apprenticeship hours, occupational safety credential, or a documented competency transcript.</p></div></div>
+  <div class="stage"><div class="num">3</div><div><h3>remove licensing surprises early</h3><p>Identify statutory barriers for people with criminal records before training begins. Advocate reform where barriers are unnecessarily broad.</p></div></div>
+  <div class="stage"><div class="num">4</div><div><h3>sign employer commitments before graduation</h3><p>Reserve interviews, apprenticeship slots, transitional jobs, and work-release placements where lawful.</p></div></div>
+  <div class="stage"><div class="num">5</div><div><h3>issue proof-of-contribution portfolios</h3><p>Hours, competencies, credentials, supervisor references, verified project outcomes, safety record, and post-release pathway—all with participant access.</p></div></div>
+  <div class="notice ok">A 2026 study found participation in institutional vocational training associated with reduced recidivism and increased employment; program participation itself appeared more important than simply accumulating additional hours. This argues for quality and completion, not warehousing people in endless training.</div>
+ </div>
+</details>
+</section>
+
+<section id="economics" class="module" data-search="economics wages restitution savings family support budget labor cost coerced">
+<details open>
+ <summary>8. economics, wages, restitution, and reentry savings</summary>
+ <div class="inside">
+  <div class="grid">
+   <div>
+    <h3>participant compensation model</h3>
+    <label>illustrative hourly wage</label><input id="wage" type="number" min="0" step="0.25" value="8">
+    <label>hours / week</label><input id="hours" type="number" min="1" max="60" value="20">
+    <label>program weeks / year</label><input id="weeks" type="number" min="1" max="52" value="46">
+    <label>reentry savings share (%)</label><input id="savingsShare" type="number" min="0" max="100" value="35">
+    <button class="btn primary" id="calcEconomics">calculate</button>
+   </div>
+   <div>
+    <h3>illustrative annual participant economics</h3>
+    <div id="economicsOutput" class="notice ok"></div>
+   </div>
+  </div>
+  <p class="notice danger"><strong>Anti-exploitation rule:</strong> restoration cannot become green-branded captive labor. Participation should be voluntary; compensation must be lawful and transparent; safety standards should match equivalent outside work; private partners must not receive an unfair labor subsidy; credential ownership belongs to the participant.</p>
+ </div>
+</details>
+</section>
+
+<section id="rights" class="module" data-search="rights safeguards voluntary wages safety grievance accessibility family due process privacy">
+<details open>
+ <summary>9. rights and legitimacy safeguards</summary>
+ <div class="inside">
+  <div id="safeguardGrid" class="grid"></div>
+  <div class="progress"><span id="safeguardBar"></span></div>
+  <p id="safeguardNote" class="small"></p>
+ </div>
+</details>
+</section>
+
+<section id="reentry" class="module" data-search="reentry release housing savings employment health identification mentor family">
+<details open>
+ <summary>10. release should look like graduation, not a cliff</summary>
+ <div class="inside">
+  <div class="grid3">
+   <div class="card"><h3>90 days before release</h3><p>ID documents, benefits eligibility, housing plan, employer connection, credential transcript, medical continuity, transportation, banking, family plan.</p></div>
+   <div class="card"><h3>30 days before release</h3><p>Interview completed, tools/PPE needs identified, phone/contact plan, mentor introduced, prescriptions bridged, savings plan activated.</p></div>
+   <div class="card"><h3>day of release</h3><p>Documents in hand, confirmed destination, transit, contact numbers, medications, portfolio, funds, appointment calendar.</p></div>
+   <div class="card"><h3>first 7 days</h3><p>Employment/reentry appointment, housing stabilization, health follow-up, mentor check-in, technology access, family support.</p></div>
+   <div class="card"><h3>first 90 days</h3><p>Job retention coaching, apprenticeship progress, emergency fund, credential continuation, conflict support, evaluation feedback.</p></div>
+   <div class="card"><h3>12 months</h3><p>Track employment stability, earnings, housing, credentials, recidivism measures, well-being, family stability, and participant-reported agency.</p></div>
+  </div>
+ </div>
+</details>
+</section>
+
+<section id="data" class="module" data-search="data metrics evaluation recidivism employment staff incidents public value kpi">
+<details open>
+ <summary>11. measurement dashboard</summary>
+ <div class="inside">
+  <p>Use outcomes rather than enrollment counts alone. Save a baseline and target for each selected metric.</p>
+  <div id="metricGrid" class="grid3"></div>
+  <div class="btnrow"><button class="btn primary" id="saveMetrics">save measurement plan</button></div>
+  <h3>minimum evaluation bundle</h3>
+  <table>
+   <thead><tr><th>domain</th><th>minimum outcome</th><th>avoid</th></tr></thead>
+   <tbody>
+    <tr><td>education</td><td>completion + credential attainment</td><td>hours attended alone</td></tr>
+    <tr><td>employment</td><td>job entry + 6/12-month retention + earnings</td><td>job referral counts</td></tr>
+    <tr><td>safety</td><td>participant/staff injuries, misconduct, grievances</td><td>only counting disciplinary writeups</td></tr>
+    <tr><td>restoration</td><td>survival/maintenance after 12–24 months</td><td>seedlings planted without follow-up</td></tr>
+    <tr><td>reentry</td><td>housing, ID, health continuity, savings, mentorship</td><td>release-plan completion checkbox</td></tr>
+    <tr><td>recidivism</td><td>multiple definitions + time horizons</td><td>one ambiguous headline rate</td></tr>
+    <tr><td>legitimacy</td><td>participant/staff perception surveys</td><td>assuming compliance equals trust</td></tr>
+   </tbody>
+  </table>
+ </div>
+</details>
+</section>
+
+<section id="risk" class="module" data-search="risk register abuse coercion retaliation gaming inequity security political legal">
+<details open>
+ <summary>12. risk register</summary>
+ <div class="inside">
+  <div id="riskGrid" class="grid"></div>
+  <label>additional jurisdiction-specific risk</label><input id="customRisk" type="text" placeholder="e.g. union jurisdiction conflict, licensing restriction, water rights">
+  <div class="btnrow"><button class="btn" id="addRisk">add risk</button></div>
+ </div>
+</details>
+</section>
+
+<section id="procurement" class="module" data-search="procurement vendors contracts nonprofit college partner due diligence">
+<details>
+ <summary>13. procurement and partner requirements</summary>
+ <div class="inside">
+  <div class="grid">
+   <div class="card"><h3>education provider</h3><p>Accreditation/recognition, instructor qualifications, transferable credit, accessibility, completion data, participant-owned transcripts.</p></div>
+   <div class="card"><h3>employer / industry partner</h3><p>Real hiring pathway, wage transparency, record-screening policy, no unfair captive-labor subsidy, safety compliance, grievance process.</p></div>
+   <div class="card"><h3>restoration partner</h3><p>Ecological/food-system competence, long-term maintenance plan, survival metrics, culturally appropriate design, no greenwashing.</p></div>
+   <div class="card"><h3>technology vendor</h3><p>Data minimization, exportability, accessibility, offline contingency, security review, no behavioral surveillance beyond necessary program functions.</p></div>
+   <div class="card"><h3>evaluator</h3><p>Independence, preregistered questions where suitable, publication protections, participant privacy, clear handling of negative results.</p></div>
+   <div class="card"><h3>community partner</h3><p>Defined role, insurance/safety clarity, participant dignity, continuity after release, transparent funding relationship.</p></div>
+  </div>
+ </div>
+</details>
+</section>
+
+<section id="coalition" class="module" data-search="coalition stakeholder corrections colleges unions employers municipality indigenous victims food bank">
+<details open>
+ <summary>14. coalition builder</summary>
+ <div class="inside">
+  <p>Select the minimum viable coalition. The tool will generate an implementation responsibility matrix.</p>
+  <div id="partnerGrid" class="grid3"></div>
+  <div class="btnrow"><button class="btn primary" id="buildCoalition">build responsibility matrix</button></div>
+  <div id="coalitionOutput"></div>
+ </div>
+</details>
+</section>
+
+<section id="policy" class="module" data-search="model policy language legislation directive statute regulation executive order">
+<details open>
+ <summary>15. model policy language generator</summary>
+ <div class="inside">
+  <div class="grid">
+   <div>
+    <label>instrument</label>
+    <select id="policyInstrument"><option>ministerial / departmental directive</option><option>executive order</option><option>pilot statute</option><option>appropriations rider</option><option>agency regulation</option><option>interagency memorandum</option></select>
+    <label>program name</label><input id="programName" type="text" value="civic restoration corrections pilot">
+    <label>special objective</label><input id="specialObjective" type="text" placeholder="e.g. reduce CTE waitlists and build regional edible infrastructure">
+    <button class="btn primary" id="generatePolicy">generate model language</button>
+   </div>
+   <div>
+    <label>generated model language</label>
+    <textarea id="policyOutput" style="min-height:420px"></textarea>
+   </div>
+  </div>
+  <p class="small">Template only. Local legislative counsel, corrections counsel, labor counsel, human-rights review, and fiscal analysis are required before adoption.</p>
+ </div>
+</details>
+</section>
+
+<section id="exports" class="module" data-search="export brief memo json implementation plan legislative briefing">
+<details open>
+ <summary>16. briefing and implementation exports</summary>
+ <div class="inside">
+  <div class="btnrow">
+   <button class="btn primary" id="exportJson">export implementation JSON</button>
+   <button class="btn alt" id="exportBrief">export one-page brief (.txt)</button>
+   <button class="btn" id="exportPlan">export implementation plan (.txt)</button>
+   <button class="btn" id="downloadHtml">download as index.html</button>
+   <button class="btn" onclick="window.print()">print / save PDF</button>
+   <button class="btn warn" id="reset">reset local project</button>
+  </div>
+  <pre id="statePreview"></pre>
+ </div>
+</details>
+</section>
+
+<section id="evidence" class="module" data-search="evidence references sources Washington prisons education vocational Virginia waitlist">
+<details open>
+ <summary>17. evidence base and precedents</summary>
+ <div class="inside">
+  <div class="reference"><strong>Correctional education meta-analysis (OJP / Journal of Experimental Criminology).</strong> Highest-quality studies found participants in correctional education were 28% less likely to recidivate than nonparticipants. <a href="https://www.ojp.gov/ncjrs/virtual-library/abstracts/does-providing-inmates-education-improve-postrelease-outcomes-meta" target="_blank" rel="noopener">Source</a></div>
+  <div class="reference"><strong>Correctional education cost/outcome synthesis (OJP/RAND).</strong> Meta-analysis found lower reincarceration risk and estimated meaningful savings relative to reincarceration costs. <a href="https://www.ojp.gov/library/publications/how-effective-correctional-education-and-where-do-we-go-here-results" target="_blank" rel="noopener">Source</a></div>
+  <div class="reference"><strong>Institutional vocational training, 2026.</strong> Participation was associated with reduced recidivism and increased employment; added hours did not show additional observable benefit, supporting quality/completion over seat time. <a href="https://www.sciencedirect.com/science/article/pii/S0047235226000255" target="_blank" rel="noopener">Source</a></div>
+  <div class="reference"><strong>Washington Sustainability in Prisons Project.</strong> Statewide correctional sustainability programming spans environmental education, conservation, sustainable operations, restorative nature, and community contributions. In 2025, Washington prisons reported 159 sustainability-related programs and 208 partner/ally organizations. <a href="https://sustainabilityinprisons.org/programs/" target="_blank" rel="noopener">Source</a></div>
+  <div class="reference"><strong>Washington prison conservation model.</strong> Incarcerated partners can serve as students and technicians, with education, hands-on conservation experience, and certificates. <a href="https://sustainabilityinprisons.org/spp-programs-in-wa/conservation/" target="_blank" rel="noopener">Source</a></div>
+  <div class="reference"><strong>Virginia correctional education capacity, 2026 legislative report.</strong> February 2025 data showed more than 3,000 people on CTE waitlists, more than twice enrollment; 623 people released in 2024 had been waiting but never received CTE before release. <a href="https://rga.lis.virginia.gov/Published/2026/RD313" target="_blank" rel="noopener">Source</a></div>
+  <div class="notice">Evidence quality differs by intervention. Education and vocational programming have substantially stronger empirical foundations than prison gamification, ecological restoration as a recidivism intervention, or any single “hero” framing. Pilot those newer components explicitly as hypotheses and evaluate them.</div>
+ </div>
+</details>
+</section>
+
+</div>
+<footer>
+ <strong>purpose and limits</strong>
+ <p>This tool is for lawful institutional design, not punitive escalation. It does not replace legal counsel, occupational-safety review, collective-bargaining obligations, correctional clinical judgment, Indigenous consultation, disability/accessibility obligations, human-rights review, or independent evaluation.</p>
+ <p class="small">Local-first: project data are stored in your browser. No analytics or external tracking are included. Evidence snapshot: September 15, 2026.</p>
+</footer>
+</main>
+</div>
+
+<noscript><div style="padding:20px;background:white;color:black"><h2>JavaScript disabled</h2><p>The policy content remains readable and printable, but the pilot builder, calculators, local storage, and exports require JavaScript.</p></div></noscript>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const TRACKS = {
+ "edible infrastructure":"Fruit-tree nurseries, community orchards, seedling propagation, gardens, food-bank production. Pair with horticulture, irrigation, food safety, and nursery credentials.",
+ "ecological restoration":"Native plant nurseries, pollinator habitat, watershed vegetation, conservation science. Pair with ecology, nursery, GIS/data where appropriate, and conservation partners.",
+ "construction & retrofit":"Carpentry, weatherization, safe building maintenance, energy efficiency. Pair with industry credentials, apprenticeships, and licensing review.",
+ "repair economy":"Bicycles, appliances, furniture, tools, assistive devices. Pair with diagnostics, safety, customer service, and community donation partners.",
+ "water stewardship":"Irrigation, leak reduction, rainwater systems where lawful, water-efficiency projects. Pair with plumbing/irrigation education and municipal partners.",
+ "compost & soil":"Food-waste reduction, composting, soil production, vermiculture, facility gardens. Pair with science curriculum and measurable waste diversion.",
+ "culinary & food systems":"Food safety, institutional kitchens, community meals, food processing, logistics. Pair with recognized food-safety credentials and employers.",
+ "digital & administrative":"Digital literacy, records, data quality, office software, accessible document production. Pair with privacy limits and office-industry pathways.",
+ "peer education & mentoring":"Tutoring, literacy support, orientation, restorative skills, peer navigation. Pair with supervision and recognized learning outcomes.",
+ "emergency logistics":"Inventory, warehouse safety, disaster-supply preparation, routing concepts, humanitarian logistics. Keep activities lawful, civilian, and non-operationally sensitive."
+};
+const SAFEGUARDS=[
+ "Participation is voluntary and declining does not trigger retaliation or loss of baseline rights.",
+ "Compensation policy is lawful, transparent, and independently reviewable.",
+ "Occupational safety protections match equivalent work to the maximum extent required/feasible by law.",
+ "Credentials and transcripts are portable and accessible to participants.",
+ "Grievance and whistleblower channels exist outside the direct program chain of command.",
+ "Disability accommodations and language access are built into participation.",
+ "Private partners cannot obtain unfair captive-labor advantages.",
+ "Participant data collection is minimized and protected.",
+ "Program access is audited for race, gender, disability, sentence length, security classification, and release-date inequity.",
+ "Negative evaluation results can be reported without retaliation or political suppression."
+];
+const METRICS=[
+ "course completion","portable credentials","employment within 90 days","6-month job retention","12-month job retention",
+ "earnings trajectory","housing stability","reentry savings","participant grievances","staff injuries","participant injuries",
+ "violent disciplinary incidents","education waitlist size","time-to-program entry","restoration survival after 12 months",
+ "food / material output with quality controls","mentor continuity","family contact stability","recidivism: rearrest","recidivism: reconviction","recidivism: reincarceration","participant-reported agency","staff legitimacy / climate"
+];
+const RISKS=[
+ ["coercive labor","Require voluntariness, wage review, independent grievance, and equivalent safety controls."],
+ ["unequal access","Audit eligibility and waitlists; do not tie liberty outcomes to programs unavailable to comparable participants."],
+ ["greenwashing","Measure survival, maintenance, ecological appropriateness, and partner capacity—not planting counts alone."],
+ ["credential theater","Use recognized credit/certifications; disclose informal badges clearly."],
+ ["staff overload","Fund staffing, scheduling, instructor coverage, security coordination, and release planning."],
+ ["political overselling","Publish baseline, methods, negative findings, and uncertainty."],
+ ["program gaming","Use verification, random quality audits, team measures, and outcome—not raw output—targets."],
+ ["victim erasure","Keep accountability, restitution where lawful, and victim services conceptually separate from 'earning redemption' rhetoric."],
+ ["security incident","Use ordinary correctional risk controls without converting the program into punitive surveillance."],
+ ["partner failure","Require continuity plans, exit clauses, data return, participant record portability, and substitute providers."]
+];
+const PARTNERS={
+ "corrections education":"curriculum, instructors, literacy, scheduling",
+ "community college":"credit, transcripts, faculty, stackable credentials",
+ "trade union / apprenticeship":"standards, apprenticeship hours, employer pathway",
+ "employers":"interviews, jobs, equipment expectations, wage signals",
+ "municipality":"land, parks, orchards, public works, placement sites",
+ "conservation agency":"native species, restoration science, field standards",
+ "food bank / food system":"produce needs, distribution, food safety, community linkage",
+ "reentry provider":"housing, ID, benefits, mentoring, release continuity",
+ "victim services":"accountability and victim-centered safeguard review",
+ "university evaluator":"independent methods, ethics, outcomes, publication",
+ "legal / labor counsel":"authority, labor law, licensing, privacy, bargaining obligations",
+ "participant council":"program legitimacy, usability, safety, anti-coercion feedback"
+};
+
+let state=JSON.parse(localStorage.getItem("prpa_state")||"null")||{
+ version:"1.0.0",created:new Date().toISOString(),pilot:{cohort:120},tracks:[],safeguards:[],metrics:[],risks:[],
+ partners:[],policy:"",notes:""
+};
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));}
+function save(){localStorage.setItem("prpa_state",JSON.stringify(state));renderState();updateHud();}
+function download(name,text,type="text/plain"){
+ const b=new Blob([text],{type}); const a=document.createElement("a"); a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),250);
+}
+
+$("#trackGrid").innerHTML=Object.entries(TRACKS).map(([k,v])=>`<label class="card"><input class="trackCheck" type="checkbox" value="${esc(k)}"> <strong>${k}</strong><p class="small">${v}</p></label>`).join("");
+$("#safeguardGrid").innerHTML=SAFEGUARDS.map((x,i)=>`<label class="card"><input class="safeCheck" type="checkbox" value="${i}"> ${x}</label>`).join("");
+$("#metricGrid").innerHTML=METRICS.map(m=>`<label class="card"><input class="metricCheck" type="checkbox" value="${esc(m)}"> ${m}</label>`).join("");
+$("#riskGrid").innerHTML=RISKS.map(([r,m])=>`<div class="card"><h3>${r}</h3><p>${m}</p></div>`).join("");
+$("#partnerGrid").innerHTML=Object.entries(PARTNERS).map(([k,v])=>`<label class="card"><input class="partnerCheck" type="checkbox" value="${esc(k)}"> <strong>${k}</strong><p class="small">${v}</p></label>`).join("");
+
+function restoreChecks(){
+ $$(".trackCheck").forEach(c=>c.checked=(state.tracks||[]).includes(c.value));
+ $$(".safeCheck").forEach(c=>c.checked=(state.safeguards||[]).includes(Number(c.value)));
+ $$(".metricCheck").forEach(c=>c.checked=(state.metrics||[]).includes(c.value));
+ $$(".partnerCheck").forEach(c=>c.checked=(state.partners||[]).includes(c.value));
+}
+restoreChecks();
+
+function savePilot(){
+ state.pilot={
+  jurisdiction:$("#jurisdiction").value.trim(),
+  facility:$("#facility").value.trim(),
+  facilityType:$("#facilityType").value,
+  cohort:Number($("#cohort").value)||120,
+  bottleneck:$("#bottleneck").value,
+  length:$("#pilotLength").value,
+  evaluation:$("#evalDesign").value,
+  publicTarget:$("#publicTarget").value.trim()
+ };
+ save();
+ $("#pilotSummary").innerHTML=`<strong>${esc(state.pilot.facility||"unnamed facility")}</strong> · ${esc(state.pilot.facilityType)} · cohort ${state.pilot.cohort} · ${esc(state.pilot.length)} · primary bottleneck: ${esc(state.pilot.bottleneck)}.`;
+}
+$("#savePilot").onclick=savePilot;
+$("#cohort").oninput=()=>{$("#cohortHud").textContent=$("#cohort").value||0;};
+
+$("#saveTracks").onclick=()=>{
+ state.tracks=$$(".trackCheck:checked").map(c=>c.value);save();
+ $("#trackOutput").innerHTML=state.tracks.length?`<div class="notice ok" style="margin-top:10px"><strong>selected:</strong> ${state.tracks.map(esc).join(", ")}</div>`:"<div class='notice'>Select at least one track.</div>";
+};
+$$(".safeCheck").forEach(c=>c.onchange=()=>{
+ state.safeguards=$$(".safeCheck:checked").map(x=>Number(x.value));save();renderSafeguards();
+});
+function renderSafeguards(){
+ const n=(state.safeguards||[]).length;
+ $("#safeguardBar").style.width=(n/SAFEGUARDS.length*100)+"%";
+ $("#safeguardNote").textContent=`${n}/${SAFEGUARDS.length} safeguards selected. A rapid pilot should not launch high-risk work tracks without the relevant controls.`;
+}
+renderSafeguards();
+
+$("#calcEconomics").onclick=()=>{
+ const w=Number($("#wage").value)||0,h=Number($("#hours").value)||0,weeks=Number($("#weeks").value)||0,s=Number($("#savingsShare").value)||0;
+ const gross=w*h*weeks,saveAmt=gross*s/100;
+ $("#economicsOutput").innerHTML=`Gross annual illustrative earnings: <strong>$${gross.toLocaleString(undefined,{maximumFractionDigits:0})}</strong><br>
+ Reentry savings at ${s}%: <strong>$${saveAmt.toLocaleString(undefined,{maximumFractionDigits:0})}</strong><br>
+ Remaining before any lawful deductions/allocations: <strong>$${(gross-saveAmt).toLocaleString(undefined,{maximumFractionDigits:0})}</strong><br><span class="small">Illustrative only; wage, tax, restitution, family-support, and deduction rules vary by jurisdiction.</span>`;
+};
+$("#calcEconomics").click();
+
+$("#saveMetrics").onclick=()=>{state.metrics=$$(".metricCheck:checked").map(c=>c.value);save();};
+$("#addRisk").onclick=()=>{
+ const r=$("#customRisk").value.trim(); if(!r)return;
+ state.risks.push({risk:r,mitigation:"Requires jurisdiction-specific mitigation plan."});$("#customRisk").value="";save();
+ $("#riskGrid").insertAdjacentHTML("beforeend",`<div class="card"><h3>${esc(r)}</h3><p>Requires jurisdiction-specific mitigation plan.</p></div>`);
+};
+
+$("#buildCoalition").onclick=()=>{
+ state.partners=$$(".partnerCheck:checked").map(c=>c.value);save();
+ if(!state.partners.length){$("#coalitionOutput").innerHTML="<p class='notice'>Select partners first.</p>";return;}
+ $("#coalitionOutput").innerHTML=`<table><thead><tr><th>partner</th><th>primary responsibility</th><th>first 30-day deliverable</th></tr></thead><tbody>`+
+ state.partners.map(p=>`<tr><td>${esc(p)}</td><td>${esc(PARTNERS[p])}</td><td>Named lead + capacity statement + pilot commitment / constraint list</td></tr>`).join("")+`</tbody></table>`;
+};
+
+function policyText(){
+ const p=state.pilot||{}, tracks=(state.tracks||[]).join(", ")||"[selected restoration/workforce tracks]";
+ const obj=$("#specialObjective").value.trim()||"increase access to education, portable credentials, restorative work, reentry readiness, and independently evaluated public value";
+ const name=$("#programName").value.trim()||"civic restoration corrections pilot";
+ const instrument=$("#policyInstrument").value;
+ return `${instrument.toUpperCase()}
+
+TITLE: ${name}
+
+PURPOSE
+Establish a time-limited correctional pilot to ${obj}, while preserving lawful security requirements, due process, participant dignity, occupational safety, and voluntary participation.
+
+PILOT SCOPE
+The responsible corrections authority shall designate one or more pilot facilities and a target cohort appropriate to local capacity. Current working profile: ${p.facility||"[facility]"}, ${p.facilityType||"[facility type]"}, target cohort ${p.cohort||"[cohort]"}, pilot duration ${p.length||"[duration]"}.
+
+PROGRAM COMPONENTS
+The pilot should integrate formal education, workforce preparation, restorative/public-benefit projects, and structured reentry planning. Proposed tracks: ${tracks}.
+
+VOLUNTARY PARTICIPATION AND NON-RETALIATION
+Participation in restoration/work programs shall be voluntary to the extent required by the governing legal framework, and non-participation shall not result in loss of baseline rights or retaliatory treatment. Any incentive system shall be reviewed for coercive effects and unequal access.
+
+CREDENTIALS
+Where practicable, training shall lead to portable, externally recognizable credentials, academic credit, apprenticeship recognition, or documented competencies that remain accessible to participants after release.
+
+COMPENSATION AND LABOR SAFEGUARDS
+Compensation, deductions, restitution allocations, savings, safety standards, and private-sector participation shall comply with applicable law. Contracts shall prohibit unfair private benefit from captive labor and require transparent terms.
+
+REENTRY
+Participants approaching release shall receive an individualized continuity plan covering identification documents, housing, health care, transportation, benefits eligibility, employment or apprenticeship, credentials, savings, mentoring, and family/community support where appropriate.
+
+GOVERNANCE
+The pilot shall include an accountable executive sponsor, facility implementation team, participant feedback mechanism, external evaluation capacity, and rights/labor review. Material conflicts of interest shall be disclosed.
+
+MEASUREMENT
+The authority shall publish baseline measures and track program access, wait times, completion, portable credentials, employment and retention, injuries, grievances, restoration outcomes, reentry readiness, and multiple clearly defined recidivism outcomes. Negative or null findings shall not be suppressed.
+
+EQUITY
+Program eligibility, waitlists, completion, benefits, and disciplinary interactions shall be reviewed for unjustified disparities, including those related to race, sex, disability, language, sentence length, security classification, and proximity to release.
+
+DATA
+Only data necessary for program operation and evaluation shall be collected. Access, retention, sharing, de-identification, and participant rights shall be documented.
+
+INDEPENDENT REVIEW
+An external evaluator should assess implementation fidelity, participant legitimacy, public value, safety, employment/credential outcomes, and unintended effects before material scale-up.
+
+SUNSET AND SCALE
+The pilot expires or returns for formal renewal after ${p.length||"[duration]"} unless extended by lawful authority. Scale decisions shall be based on safety, fairness, credential value, measured outcomes, cost, and partner capacity—not enrollment or publicity alone.
+
+LEGAL REVIEW
+This template requires jurisdiction-specific review by legislative/corrections counsel, labor counsel, fiscal analysts, privacy/accessibility specialists, and relevant collective-bargaining or human-rights authorities before adoption.`;
+}
+$("#generatePolicy").onclick=()=>{const t=policyText();$("#policyOutput").value=t;state.policy=t;save();};
+
+function briefText(){
+ const p=state.pilot||{};
+ return `PRISON RESTORATION POLICY ACCELERATOR — ONE-PAGE BRIEF
+
+OBJECTIVE
+Convert correctional time from passive custody toward measurable education, accountability, mastery, restoration, employability, and reentry readiness while maintaining lawful security and rights protections.
+
+PILOT
+Jurisdiction: ${p.jurisdiction||"[not set]"}
+Facility: ${p.facility||"[not set]"}
+Facility type: ${p.facilityType||"[not set]"}
+Target cohort: ${p.cohort||120}
+Primary bottleneck: ${p.bottleneck||"[not set]"}
+Duration: ${p.length||"24 months"}
+Evaluation: ${p.evaluation||"[not set]"}
+
+SELECTED TRACKS
+${(state.tracks||[]).map(x=>"• "+x).join("\n")||"• not yet selected"}
+
+CORE DESIGN
+• Voluntary, non-retaliatory participation
+• Formal education + portable credentials
+• Restoration/public-value projects tied to real workforce pathways
+• Transparent compensation and reentry savings
+• Participant-owned proof-of-contribution portfolio
+• 90-day pre-release continuity plan
+• Independent evaluation and public baseline metrics
+• Explicit anti-coercion, equity, safety, privacy, and labor safeguards
+
+MEASURE
+${(state.metrics||[]).map(x=>"• "+x).join("\n")||"• completion, credentials, employment retention, housing stability, injuries/grievances, restoration survival, defined recidivism measures"}
+
+EVIDENCE
+Correctional education has repeatedly been associated with lower recidivism. A 2018 meta-analysis summarized by OJP found participants 28% less likely to recidivate in the highest-quality studies. A 2026 vocational-training study found participation associated with reduced recidivism and increased employment. Washington's Sustainability in Prisons Project demonstrates statewide environmental education/conservation programming, while Virginia's 2026 legislative review illustrates the persistent scale of education waitlists.
+
+DECISION REQUEST
+Authorize a bounded pilot, fund staffing/credentials/evaluation, establish rights safeguards, publish baseline measures, and require an evidence-based scale/no-scale decision.`;
+}
+function planText(){
+ const p=state.pilot||{};
+ return `IMPLEMENTATION PLAN
+
+0–15 DAYS
+• Name executive sponsor and program director.
+• Confirm statutory/regulatory authority.
+• Complete labor, wage, safety, privacy, accessibility, and fiscal review.
+• Select pilot facility and initial cohort.
+
+15–30 DAYS
+• Inventory education/vocational waitlists and physical capacity.
+• Map land, shops, classrooms, greenhouses, kitchens, tools, and instructor gaps.
+• Convene selected partners: ${(state.partners||[]).join(", ")||"[not selected]"}.
+
+30–45 DAYS
+• Finalize tracks: ${(state.tracks||[]).join(", ")||"[not selected]"}.
+• Map each track to portable credentials and post-release pathways.
+• Establish baseline metrics and participant eligibility criteria.
+
+45–60 DAYS
+• Sign partner MOUs.
+• Finalize compensation, savings, restitution, grievance, and data rules.
+• Establish participant council and external evaluation arrangements.
+
+60–75 DAYS
+• Train staff/instructors/participants.
+• Dry-run schedules, safety, tool control, learning assessments, and data collection.
+• Resolve accessibility and language needs.
+
+75–90 DAYS
+• Launch cohort of ${p.cohort||120}.
+• Run weekly implementation reviews for first 8 weeks.
+• Publish baseline and pilot charter.
+• Do not scale until implementation fidelity and safety are acceptable.
+
+MONTHS 4–12
+• Monitor completion, waitlists, credentials, safety, grievances, legitimacy, restoration quality, partner capacity, and reentry outputs.
+• Correct inequities and bottlenecks.
+
+MONTHS 12–${p.length||"24 months"}
+• Assess job placement and retention for released participants.
+• Measure restoration survival/maintenance.
+• Conduct independent interim/final evaluation.
+• Decide: scale, redesign, narrow, or stop.`;
+}
+
+$("#exportJson").onclick=()=>download("prison_restoration_policy_plan.json",JSON.stringify(state,null,2),"application/json");
+$("#exportBrief").onclick=()=>download("prison_restoration_one_page_brief.txt",briefText());
+$("#exportPlan").onclick=()=>download("prison_restoration_implementation_plan.txt",planText());
+$("#downloadHtml").onclick=()=>download("index.html",document.documentElement.outerHTML,"text/html");
+$("#reset").onclick=()=>{if(confirm("Reset all locally saved policy work?")){localStorage.removeItem("prpa_state");location.reload();}};
+
+function renderState(){
+ $("#statePreview").textContent=JSON.stringify(state,null,2);
+}
+function updateHud(){
+ const inputs=[
+  !!state.pilot?.jurisdiction,!!state.pilot?.facility,!!state.pilot?.bottleneck,
+  (state.tracks||[]).length>=3,(state.safeguards||[]).length>=8,(state.metrics||[]).length>=6,
+  (state.partners||[]).length>=5,!!state.policy
+ ];
+ const ready=Math.round(inputs.filter(Boolean).length/inputs.length*100);
+ $("#readiness").textContent=ready+"%";
+ $("#trackCount").textContent=(state.tracks||[]).length;
+ $("#safeguardScore").textContent=(state.safeguards||[]).length+"/10";
+ $("#cohortHud").textContent=state.pilot?.cohort||120;
+}
+renderState();updateHud();
+
+if(state.pilot){
+ $("#jurisdiction").value=state.pilot.jurisdiction||"";
+ $("#facility").value=state.pilot.facility||"";
+ $("#cohort").value=state.pilot.cohort||120;
+ $("#publicTarget").value=state.pilot.publicTarget||"";
+ if(state.pilot.facilityType)$("#facilityType").value=state.pilot.facilityType;
+ if(state.pilot.bottleneck)$("#bottleneck").value=state.pilot.bottleneck;
+ if(state.pilot.length)$("#pilotLength").value=state.pilot.length;
+ if(state.pilot.evaluation)$("#evalDesign").value=state.pilot.evaluation;
+}
+if(state.policy)$("#policyOutput").value=state.policy;
+
+$("#search").oninput=e=>{
+ const q=e.target.value.trim().toLowerCase();
+ $$(".module").forEach(m=>{const hay=(m.dataset.search+" "+m.innerText).toLowerCase();m.dataset.hidden=(q&&!hay.includes(q))?"true":"false";});
+};
+
+window.addEventListener("beforeprint",()=>$$("details").forEach(d=>d.open=true));
+
+// IndexedDB snapshot for graceful local persistence beyond localStorage.
+try{
+ const req=indexedDB.open("prison_restoration_policy_db",1);
+ req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains("snapshots"))db.createObjectStore("snapshots",{keyPath:"id"});}
+ req.onsuccess=e=>{
+  const db=e.target.result, tx=db.transaction("snapshots","readwrite");
+  tx.objectStore("snapshots").put({id:"latest",savedAt:new Date().toISOString(),state});
+ };
+}catch(e){}
+</script>
+</body>
+</html>
